@@ -1,44 +1,52 @@
 #include "monty.h"
-#include <stdlib.h> 
 
 /**
- * push - Pushes an element onto the stack.
- * @stack: Double pointer to the top of the stack.
- * @line_number: Line number in the Monty byte code file.
+ * f_push - Pushes an integer onto the stack or queue.
+ * @head: Pointer to the head of the stack/queue.
+ * @counter: Line number in the script.
  */
-void push(stack_t **stack, unsigned int line_number)
+void f_push(stack_t **head, unsigned int counter)
 {
-    char *endptr;
-    int n;
-
-    if (!global_arg || !is_numeric(global_arg))
+    if (!bus.arg)
     {
-        fprintf(stderr, "L%u: usage: push integer\n", line_number);
+        fprintf(stderr, "L%d: usage: push integer\n", counter);
         exit(EXIT_FAILURE);
     }
 
-    n = strtol(global_arg, &endptr, 10); // Convert argument to integer
+    char *arg = bus.arg;
+    int value = 0;
+    int is_negative = 0;
+    unsigned int i = 0;
 
-    if (*endptr != '\0')
+    if (arg[i] == '-')
     {
-        fprintf(stderr, "L%u: usage: push integer\n", line_number);
-        exit(EXIT_FAILURE);
+        is_negative = 1;
+        i++;
     }
 
-    stack_t *new_node = malloc(sizeof(stack_t));
-    if (!new_node)
+    while (arg[i] != '\0')
     {
-        fprintf(stderr, "Error: malloc failed\n");
-        exit(EXIT_FAILURE);
+        if (arg[i] < '0' || arg[i] > '9')
+        {
+            fprintf(stderr, "L%d: usage: push integer\n", counter);
+            exit(EXIT_FAILURE);
+        }
+        value = value * 10 + (arg[i] - '0');
+        i++;
     }
 
-    new_node->n = n;
-    new_node->prev = NULL;
-    new_node->next = *stack;
+    if (is_negative)
+    {
+        value = -value;
+    }
 
-    if (*stack)
-        (*stack)->prev = new_node;
-
-    *stack = new_node;
+    if (bus.lifi == 0)
+    {
+        addnode(head, value);
+    }
+    else
+    {
+        addqueue(head, value); 
+    }
 }
 
