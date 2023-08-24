@@ -1,4 +1,5 @@
 #include "monty.h"
+#include <stdlib.h> 
 
 /**
  * push - Pushes an element onto the stack.
@@ -7,14 +8,23 @@
  */
 void push(stack_t **stack, unsigned int line_number)
 {
-    /* Check if there's an argument after the opcode */
+    char *endptr;
+    int n;
+
     if (!global_arg || !is_numeric(global_arg))
     {
         fprintf(stderr, "L%u: usage: push integer\n", line_number);
         exit(EXIT_FAILURE);
     }
 
-    /* Create a new stack node */
+    n = strtol(global_arg, &endptr, 10); // Convert argument to integer
+
+    if (*endptr != '\0')
+    {
+        fprintf(stderr, "L%u: usage: push integer\n", line_number);
+        exit(EXIT_FAILURE);
+    }
+
     stack_t *new_node = malloc(sizeof(stack_t));
     if (!new_node)
     {
@@ -22,7 +32,7 @@ void push(stack_t **stack, unsigned int line_number)
         exit(EXIT_FAILURE);
     }
 
-    new_node->n = atoi(global_arg); 
+    new_node->n = n;
     new_node->prev = NULL;
     new_node->next = *stack;
 

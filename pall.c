@@ -1,4 +1,6 @@
 #include "monty.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 /**
  * pall - Prints all the values on the stack, starting from the top.
